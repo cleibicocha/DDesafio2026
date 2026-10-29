@@ -1,0 +1,18 @@
+---
+title: "Códigos"
+---
+
+# Pacotes
+
+```{r}
+library(rio)
+df <- import("Laboratorio.xlsx", setclass = "tbl")
+df
+```
+# Exploração
+
+#Gráfica
+```{r}
+hist(df$MG)
+```
+

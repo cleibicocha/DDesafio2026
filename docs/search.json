@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "solucao_desafio.html",
+    "href": "solucao_desafio.html",
+    "title": "Códigos",
+    "section": "",
+    "text": "Pacotes\n\nlibrary(rio)\ndf &lt;- import(\"Laboratorio.xlsx\", setclass = \"tbl\")\ndf\n\n# A tibble: 600 × 9\n     IMG TIPO    GEN   PLANTA    AP    AC    NR    MC    MG\n   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n 1     1 DOURADA G1    P1      78      42     3  4.78  3.76\n 2     2 DOURADA G1    P2      82      37     3  6.87  5.3 \n 3     3 DOURADA G1    P3      70      34     3  3.33  2.66\n 4     4 DOURADA G1    P4      68      40     2  2.85  2.32\n 5     5 DOURADA G1    P5      88      44     2  5.19  3.91\n 6     6 DOURADA G3    P1      75.5    38     4  8     3.97\n 7     7 DOURADA G3    P2      74      43     3  3.5   3   \n 8     8 DOURADA G3    P3      NA      NA    NA NA    NA   \n 9     9 DOURADA G3    P4      NA      NA    NA NA    NA   \n10    10 DOURADA G3    P5      NA      NA    NA NA    NA   \n# ℹ 590 more rows\n\n\n\n\nExploração\n#Gráfica\n\nhist(df$MG)"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "DDesafio2026",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+  }
+]

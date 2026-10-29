@@ -1,0 +1,21 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "DDesafio2026"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+      - solucao_desafio.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+editor: source
+
