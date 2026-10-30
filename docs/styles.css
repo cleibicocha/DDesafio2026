@@ -1,1 +1,115 @@
-/* css styles */
+/* ==========================================================
+   Variáveis e Cores Globais
+   ========================================================== */
+:root {
+  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  --accent-color: #6366f1;
+  --bg-soft: #f8fafc;
+  --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+  --card-shadow-hover: 0 20px 35px -10px rgba(99, 102, 241, 0.2);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+}
+
+/* ==========================================================
+   Barra de Navegação Navbar
+   ========================================================== */
+.navbar {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  transition: all 0.3s ease;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ==========================================================
+   Efeitos Visuais e Cartões Modernos (Glassmorphism & Cards)
+   ========================================================== */
+.card-modern {
+  background: var(--glass-bg);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(8px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.card-modern:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.hero-banner {
+  background: var(--primary-gradient);
+  color: #ffffff;
+  border-radius: 20px;
+  padding: 3.5rem 2rem;
+  box-shadow: 0 15px 30px rgba(99, 102, 241, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ==========================================================
+   Barra Lateral Personalizada (Sidebar Widget)
+   ========================================================== */
+.sidebar-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-box h5 {
+  font-weight: 700;
+  color: #1e293b;
+  position: relative;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.sidebar-box h5::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--primary-gradient);
+  border-radius: 2px;
+}
+
+.sidebar-nav-item {
+  display: block;
+  padding: 0.6rem 1rem;
+  color: #475569;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.sidebar-nav-item:hover, .sidebar-nav-item.active {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--accent-color);
+  transform: translateX(4px);
+}
+
+/* ==========================================================
+   Animações Suaves
+   ========================================================== */
+.badge-gradient {
+  background: var(--primary-gradient);
+  color: white;
+  border-radius: 50rem;
+  padding: 0.4em 0.8em;
+  font-weight: 600;
+}

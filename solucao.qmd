@@ -1,0 +1,193 @@
+---
+title: "solucao"
+---
+# 1 pacotes e dados
+```{r}
+library(rio)
+library(tidyverse)
+
+laboratorio <- import("laboratorio.xlsx") |> 
+  rename_with(tolower)
+graos <- import("graos.csv")
+capsulas <- import("capsulas.xlsx")
+mmg <- import("mmg.xlsx") |>
+  rename_with(tolower)
+```
+
+# 2. Análise e Consolidação por Planta
+```{r}
+### graos
+graosseparate <-
+  graos |>
+  select(img, length, width)
+
+graos_resume <- graosseparate |>
+  #extrair o img numerico do inicio do nome da imagem
+  mutate(img = str_extract(img, "^\\d+")) |>
+  
+  #agrupar os registros por planta
+  group_by(img) |>
+  
+  #calcular as metricas de cada planta
+  ##resume comprimento e largura
+  summarise(
+    total_graos = n(),
+    length = mean(length, na.rm = TRUE),
+    width = mean(width, na.rm = TRUE),
+    .groups = "drop"
+    
+  ) |>
+  
+  #teste de visualização
+  filter(width < 0.35, width > 0.1)
+
+graos_resume <- 
+  graos_resume |>
+  rename(ng = total_graos, cg = length, lg = width)
+
+## número total de cápsulas (NC)
+
+capsulas_separate <-
+  capsulas |>
+  select(img)
+
+capsulas_resumo <-
+  capsulas_separate |> mutate(img = str_extract(img, "^\\d+")) |>
+  
+  #agrupar os registros por planta
+  group_by(img) |>
+  #calcular as metricas de cada planta
+  summarise(
+    total_capsulas = n())
+
+capsulas_resumo <-
+  capsulas_resumo |>
+  rename(nc = total_capsulas)
+
+#unificação do ng, gc, lc, nc
+
+graos_resume <-
+  graos_resume |>
+  mutate(img = as.numeric(img))
+
+capsulas_resumo <-
+  capsulas_resumo |>
+  mutate(img = as.numeric(img))
+
+laboratorio_final <- laboratorio |>
+  left_join(graos_resume, by = c("img" = "img")) |>
+  left_join(capsulas_resumo, by = c("img" = "img"))
+
+```
+
+
+# 3. Análise e Consolidação por Genótipo
+```{r}
+# agragação variaveis numericas por genotipo
+genotipos_resumo <- laboratorio_final |>
+  group_by(gen, tipo) |>
+  summarise(
+    np = n_distinct(img),
+    across(
+      where(is.numeric) & !any_of("img"),
+      ~ mean(.x, na.rm = TRUE)
+    ),
+    .groups = "drop"
+  ) 
+# massa de mil graos
+genotipos_final <- genotipos_resumo |>
+  left_join(mmg, by = c("gen", "tipo"))
+
+```
+
+
+# 4. Exploração e Visualização
+```{r}
+# Altura da plantas x  número de cápsulas
+
+ggplot(genotipos_final, aes(x = ap, y = nc, color = tipo)) +
+  geom_point(size = 4, alpha = 0.8) +
+  labs(
+    title = "Relação AP X NC",
+    x = "Altura da planta (ap)",
+    y = "Número de cápsulas (nc)",
+    color = "Tipo de linhaça"
+  ) +
+  theme_minimal()
+
+# Comparação da altura entre DOURADA e MARROM
+ggplot(genotipos_final, aes(x = tipo, y = ap, fill = tipo)) +
+  geom_boxplot(alpha = 0.7) +
+  geom_jitter(width = 0.15, size = 2, alpha = 0.7) +
+  labs(
+    title = "AP X tipo linhaça",
+    x = "Tipo de linhaça",
+    y = "Altura da planta (ap)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Top 5 genótipos para produção de grãos (mg)
+
+top5_genotipos <-
+  genotipos_final |>
+  group_by(tipo) |>
+  slice_max(
+    order_by = mg,
+    n = 5,
+    with_ties = FALSE
+  ) |>
+  ungroup()
+
+ggplot(top5_genotipos,
+       aes(x = reorder(gen, mg), y = mg, fill = tipo)) +
+  geom_col() +
+  coord_flip() +
+  facet_wrap(~ tipo, scales = "free_y") +
+  labs(
+    title = "Top 5 genótipos para produção de grãos",
+    x = "Genótipo",
+    y = "Média de produção de grãos (mg)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+top5_genotipos
+
+
+# diferença da média geral e a média dos top 5 genótipos
+dif_selecao <- genotipos_final |>
+  group_by(tipo) |>
+  summarise(
+    media_geral = mean(mg, na.rm = TRUE),
+    media_top5 = mean(top5_genotipos$mg[
+      top5_genotipos$tipo == first(tipo)
+    ], na.rm = TRUE),
+    diferencial = media_top5 - media_geral,
+    .groups = "drop"
+  )
+
+
+ggplot(dif_selecao,
+       aes(x = tipo, y = diferencial, fill = tipo)) +
+  geom_col(width = 0.6) +
+  geom_text(
+    aes(label = round(diferencial, 2)),
+    vjust = -0.5,
+    size = 4
+  ) +
+  labs(
+    title = "Diferencial de seleção para produção de grãos",
+    x = "Tipo de linhaça",
+    y = "Diferencial de seleção (mg)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+```
+
+# Análise Final
+  No primeiro grafico a linhaça tipo marrom apresentou altura de planta maiores que o tipo dourada, e ambas foram semelhantes quanto ao numero de capsulas, onde a dourada apresentou a média mais alta.
+  No segundo grafico em bloxpot o tipo dourada apresentou uma normalidade das medias melhor que a marrom comparado com as medianas, sendo a marrom com distribuição menos homogena.
+  No terceiro grafico quanto a melhor produção de graos por genótipo, a dourada obteve melhor produção no genotipo G5 com média de 6.75 gramas, já marrom obteve no G4 com média de 7.04 gramas.
+  No quarto grafico se vê que a média diferencial do genotipo marrom em 3.62 gramas é superior a media diferencial da dourada com 2.03 gramas, comparando as com a média geral.
